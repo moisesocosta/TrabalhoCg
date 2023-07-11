@@ -4,8 +4,6 @@
 #include <GL/glu.h>
 #include <glm/ext.hpp>
 #include <GL/glut.h>
-#include <vector>
-#include <Buraco.h>
 
 using namespace std;
 
@@ -16,7 +14,6 @@ private:
     float PosY;         // Coordenada Y da pista
     float PosZ;         // Coordenada Z da pista
     float velocidade;   // Velocidade da pista
-    vector<Buraco> buracos;
 
 public:
 
@@ -38,11 +35,6 @@ public:
             if (PosY <= -40.0) {
                 PosY += 100.0;
             }
-    }
-
-    void AdicionarBuraco(float x, float y, float z, float tamanho, GLuint tex) {
-        Buraco buraco(x, y, z, tamanho, tex);
-        buracos.push_back(buraco);
     }
 
     // Função para criar e desenhar a pista

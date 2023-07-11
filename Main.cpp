@@ -1,3 +1,6 @@
+//ANA ALICE ALEXANDRE PEREIRA - Matrícula: 493807
+//HANNA RANIELLY DA SILVA RAMOS - Matrícula: 499204
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <iostream>
@@ -7,7 +10,6 @@
 #include <math.h>
 #include <vector>
 #include <cstdlib>
-#include "Buraco.cpp"
 #include "Pista.cpp"
 #include "Largada.cpp"
 #include "Semaforo.cpp"
@@ -15,9 +17,11 @@
 #include "CarroPrincipal.cpp"
 #include "StaticObjetos.cpp"
 #include "stb_image.cpp"
+#include "Meteoro.cpp"
 
 #define FPS 30 //Limite de FPS no jogo
 #define MaxPista 25 //Quantidade máxima de faixas centrais
+#define VeloMeteoro  1.0; //Definição da velocidade que o meteoro irá percorrer o eixo z
 
 using namespace std;
 
@@ -46,7 +50,7 @@ float RotacaoSemaforo = 0.0; //Serve girar o semáforo da contagem de inicio 1-2
 float TextoX = 10;
 float TextoY = 10; 
 
-GLuint textID[10]; //Vetor dos sprites
+GLuint textID[11]; //Vetor dos sprites
 GLuint textID_velocidade[201]; //Vetor dos sprites do velocimetro
 
 
@@ -57,6 +61,7 @@ Semaforo semaforoPartida = Semaforo(30,15,13); //Criando o bloco para usar as te
 vector <Pista> VecPista; //Vetor das faixas centrais
 vector <CarroInimigo> VecCarroInimigos; //Vetor dos 5 carros inimigos
 vector <Largada> VecFaixasLargada; //Vetor da faixa de largada e chegada
+vector <Meteoro> VecMeteoro; //Vetor dos meteoros
 
 //Carregar as Texturas
 void textura(GLuint tex_id, string filePath){
@@ -85,7 +90,7 @@ void criarPista() {
     float distanciaY = 60.0;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-
+    
     int numFaixas = std::ceil(distanciaY / 4.0);
 
     for (int i = 0; i < numFaixas; i++) {
@@ -94,17 +99,9 @@ void criarPista() {
         distanciaY -= 4.0;
     }
 
-    // Adicione os buracos à primeira faixa da pista
-    VecPista[0].AdicionarBuraco(28.0, 12.5, 11.0, 2.0, textID[9]);
-    VecPista[0].AdicionarBuraco(30.0, 14.5, 11.0, 1.5, textID[10]);
-
-    // Desenhe a pista
-    for (int i = 0; i < MaxPista; i++) {
-        VecPista[i].CriarPista();
-    }
-
     Pista faixa(0.0, 0.0, 0.0);
     faixa.CriarPista();
+
 
     glFlush();
     glutSwapBuffers();
@@ -137,6 +134,22 @@ void criarCarroInimigo() {
     }
 }
 
+//Criando a frequência da queda dos meteoros e seu espaçamento
+void criarMeteoro() {
+    for (int i = 0; i <= 100; i++) {
+        int x = i * 20;
+        int z = 0;
+        if (i % 2 == 0) {
+            z = 30;
+        } else {
+            z = 20;
+        }
+        Meteoro meteoro = Meteoro(x, 50, z, textID[9]);
+        VecMeteoro.push_back(meteoro);
+    }
+}
+
+
 void criarLargada() {
     Largada Largada(25, 16.5, 10.3);
     VecFaixasLargada.push_back(Largada);
@@ -150,7 +163,7 @@ void initializeGL() {
 
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMPILE);
-    glGenTextures(10, textID);//Gerando na memoria a textura com seu id
+    glGenTextures(11, textID);//Gerando na memoria a textura com seu id
     
     textura(textID[0],"sprites/Start.png");
     textura(textID[1],"sprites/SinalVermelho.png");
@@ -161,7 +174,7 @@ void initializeGL() {
     textura(textID[6],"sprites/YouWin.png");
     textura(textID[7],"sprites/Deserto.jpg");
     textura(textID[8],"sprites/Largada.png");
-    textura(textID[9],"sprites/Buraco.jpg");
+    textura(textID[9],"sprites/Meteoro.png");
 
 
     glGenTextures(201, textID_velocidade);//Gerando na memoria a textura da velocidade com seu id
@@ -176,20 +189,16 @@ void initializeGL() {
     criarPista();
     criarCarroInimigo();
     criarLargada();
+    criarMeteoro();
 }
 
 
-void CriarPista() {
-        // Desenhe as faixas centrais
-
-        // Desenhe os buracos
-        for (const auto& buraco : buracos) {
-            glPushMatrix();
-            glTranslatef(buraco.getPosX(), buraco.getPosY(), buraco.getPosZ());
-            buraco.DesenharBuraco();
-            glPopMatrix();
-        }
+void CriarPista(){
+    for (int i = 0; i < MaxPista; i++){
+        VecPista[i].CriarPista();
     }
+}
+
 
 void CriarCarrosInimigos(){
     for (int i = 0; i < QtdCarrosInimigos; i++){
@@ -237,7 +246,11 @@ void CriarMundo(){
     //Desenhar os inimigos
     CriarCarrosInimigos();
 
-    
+    //Desenhar os meteoros
+    for (int i = 0; i < VecMeteoro.size(); i++){
+        VecMeteoro[i].DesenharMeteoro();
+    }
+
     //Desenhar a faixa de largada e consequente chegada
     for (int i = 0; i < VecFaixasLargada.size(); i++){
         VecFaixasLargada[i].DesenharFaixa(textID[8]);
@@ -306,6 +319,13 @@ void ocioso(int v){
 
     if (Temporizador != 0 && Temporizador > 0){
         Temporizador ++;
+    }
+
+    //Esse for da velovcidade ao meteoro
+    for (int i = 0; i < VecMeteoro.size(); i ++){
+        float PosZ = VecMeteoro[i].getPosZ();
+        PosZ -= VeloMeteoro;
+        VecMeteoro[i].setPosZ(PosZ);
     }
    
     // Verifica se o tempo de chegada é maior que 300 e o temporizador não é -1 ou -2
