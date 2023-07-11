@@ -18,6 +18,7 @@
 #include "StaticObjetos.cpp"
 #include "stb_image.cpp"
 #include "Meteoro.cpp"
+#include "Buraco.cpp"
 
 #define FPS 30 //Limite de FPS no jogo
 #define MaxPista 25 //Quantidade máxima de faixas centrais
@@ -62,6 +63,7 @@ vector <Pista> VecPista; //Vetor das faixas centrais
 vector <CarroInimigo> VecCarroInimigos; //Vetor dos 5 carros inimigos
 vector <Largada> VecFaixasLargada; //Vetor da faixa de largada e chegada
 vector <Meteoro> VecMeteoro; //Vetor dos meteoros
+vector <Buraco> VecBuraco; //Vetor dos buracos
 
 //Carregar as Texturas
 void textura(GLuint tex_id, string filePath){
@@ -149,6 +151,20 @@ void criarMeteoro() {
     }
 }
 
+//Criando a frequência da queda dos meteoros e seu espaçamento
+void criarBuraco() {
+    for (int i = 0; i <= 100; i++) {
+        int x = i * 20;
+        int z = 0;
+        if (i % 2 == 0) {
+            z = 30;
+        } else {
+            z = 20;
+        }
+        Buraco buraco = Buraco(x, 50, z, textID[10]);
+        VecBuraco.push_back(buraco);
+    }
+}
 
 void criarLargada() {
     Largada Largada(25, 16.5, 10.3);
@@ -175,6 +191,7 @@ void initializeGL() {
     textura(textID[7],"sprites/Deserto.jpg");
     textura(textID[8],"sprites/Largada.png");
     textura(textID[9],"sprites/Meteoro.png");
+    textura(textID[10],"sprites/Buraco.jpg");
 
 
     glGenTextures(201, textID_velocidade);//Gerando na memoria a textura da velocidade com seu id
@@ -190,12 +207,23 @@ void initializeGL() {
     criarCarroInimigo();
     criarLargada();
     criarMeteoro();
+    criarBuraco();
 }
 
 
-void CriarPista(){
-    for (int i = 0; i < MaxPista; i++){
-        VecPista[i].CriarPista();
+void CriarPista() {
+    for (const auto& faixa : VecPista) {
+        glPushMatrix();
+        glTranslatef(0.0f, 0.0f, 0.0f);
+        faixa.DesenharFaixa();
+        glPopMatrix();
+    }
+
+    for (const auto& buraco : VecBuraco) {
+        glPushMatrix();
+        glTranslatef(0.25f, 0.25f, 0.25f);
+        buraco.DesenharBuraco();
+        glPopMatrix();
     }
 }
 
@@ -249,6 +277,11 @@ void CriarMundo(){
     //Desenhar os meteoros
     for (int i = 0; i < VecMeteoro.size(); i++){
         VecMeteoro[i].DesenharMeteoro();
+    }
+
+    //Desenhar os buracos
+    for (int i = 0; i < VecBuraco.size(); i++){
+        VecBuraco[i].DesenharBuraco();
     }
 
     //Desenhar a faixa de largada e consequente chegada
