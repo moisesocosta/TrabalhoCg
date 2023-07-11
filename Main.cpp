@@ -7,6 +7,7 @@
 #include <math.h>
 #include <vector>
 #include <cstdlib>
+#include "Buraco.cpp"
 #include "Pista.cpp"
 #include "Largada.cpp"
 #include "Semaforo.cpp"
@@ -84,13 +85,22 @@ void criarPista() {
     float distanciaY = 60.0;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    
+
     int numFaixas = std::ceil(distanciaY / 4.0);
 
     for (int i = 0; i < numFaixas; i++) {
         Pista faixa(530.0, distanciaY, 10.0);
         VecPista.push_back(faixa);
         distanciaY -= 4.0;
+    }
+
+    // Adicione os buracos à primeira faixa da pista
+    VecPista[0].AdicionarBuraco(28.0, 12.5, 11.0, 2.0, textID[9]);
+    VecPista[0].AdicionarBuraco(30.0, 14.5, 11.0, 1.5, textID[10]);
+
+    // Desenhe a pista
+    for (int i = 0; i < MaxPista; i++) {
+        VecPista[i].CriarPista();
     }
 
     Pista faixa(0.0, 0.0, 0.0);
@@ -151,6 +161,7 @@ void initializeGL() {
     textura(textID[6],"sprites/YouWin.png");
     textura(textID[7],"sprites/Deserto.jpg");
     textura(textID[8],"sprites/Largada.png");
+    textura(textID[9],"sprites/Buraco.jpg");
 
 
     glGenTextures(201, textID_velocidade);//Gerando na memoria a textura da velocidade com seu id
@@ -168,12 +179,17 @@ void initializeGL() {
 }
 
 
-void CriarPista(){
-    for (int i = 0; i < MaxPista; i++){
-        VecPista[i].CriarPista();
-    }
-}
+void CriarPista() {
+        // Desenhe as faixas centrais
 
+        // Desenhe os buracos
+        for (const auto& buraco : buracos) {
+            glPushMatrix();
+            glTranslatef(buraco.getPosX(), buraco.getPosY(), buraco.getPosZ());
+            buraco.DesenharBuraco();
+            glPopMatrix();
+        }
+    }
 
 void CriarCarrosInimigos(){
     for (int i = 0; i < QtdCarrosInimigos; i++){
