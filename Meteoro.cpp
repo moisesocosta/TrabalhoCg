@@ -6,6 +6,7 @@
 
 using namespace std;
 
+//Função que cria os meteoros que aparecem no ceu do cenário.
 class Meteoro {
 private:
     float PosX;
@@ -14,8 +15,10 @@ private:
     GLuint textID;
 
 public:
+    
     Meteoro(float PosX, float PosY, float PosZ, GLuint text_ID) : PosX(PosX), PosY(PosY), PosZ(PosZ), textID(text_ID) {}
 
+    //construtor, getters e setters
     const float& getPosX() const {
         return PosX;
     }
@@ -44,6 +47,7 @@ public:
         }
     }
 
+    //Função responsável por desenhar o meteoro com a textura especificada pelas cores R, G e B.
     void TextMeteoro(GLfloat R, GLfloat G, GLfloat B) {
         glColor3f(R, G, B);
         glBindTexture(GL_TEXTURE_2D, textID);
@@ -56,6 +60,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    //Função que desenha o meteoro no cenário. É aplicada as transformações de translação, escala e chama a função TextMeteoro para renderizar o meteoro.
     void DesenharMeteoro() {
         glPushMatrix();
         glTranslatef(PosX, PosY, PosZ);

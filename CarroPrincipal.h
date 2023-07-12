@@ -23,7 +23,6 @@ public:
     void setPosX(const float& novoPosX);
     void setPosY(const float& novoPosY);
     void setPosZ(const float& novoPosZ);
-    void CriarCarro(float RotacaoPneu);
-};
-
+     void CriarCarro(float RotacaoPneu, FonteDeLuz &phong);
+}
 #endif

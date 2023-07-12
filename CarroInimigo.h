@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "carro.h"
+#include "FonteDeLuz.cpp"
 
 using namespace std;
 
@@ -26,7 +27,6 @@ public:
     const float& getVeloFixa() const;
     void setVeloMax(const float& velocidade);
     void setPosX(const float& novoPosX);
-    void CriarCarro(float RotacaoPneu);
-};
-
+    void CriarCarro(float RotacaoPneu, FonteDeLuz &phong);
+}
 #endif

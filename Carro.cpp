@@ -5,6 +5,7 @@
 #include <math.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include "FonteDeLuz.cpp"
 
 #ifndef Carro_H //Header guards para nao ocorrer redefinição e evitar erro na compilação.
 #define Carro_H
@@ -96,11 +97,12 @@ class Carro{
         //Desenha o carro.
 
 
-        void desCarro(int R, int G, int B, float PosX, float PosY, float PosZ) {
+        void desCarro(int R, int G, int B, FonteDeLuz & phong,float PosX, float PosY, float PosZ) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glm::vec3 cor = glm::vec3(R, G, B);
             glColor3f(cor.r, cor.g, cor.b);
-
+            phong.setespecularidade(glm::vec3(0.5));
+           
             // Desenhando as faces do carro
             // Cima
             glBegin(GL_QUADS);

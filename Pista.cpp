@@ -4,6 +4,7 @@
 #include <GL/glu.h>
 #include <glm/ext.hpp>
 #include <GL/glut.h>
+#include "FonteDeLuz.cpp"
 
 using namespace std;
 
@@ -38,8 +39,9 @@ public:
     }
 
     // Função para criar e desenhar a pista
-    float CriarPista() const {
+    float CriarPista(FonteDeLuz &phong) const {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            phong.setespecularidade(glm::vec3(0.2));
             glPushMatrix();
             glTranslatef(this->PosX, this->PosY, this->PosZ);
 

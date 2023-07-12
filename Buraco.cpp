@@ -56,7 +56,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void DesenharBuraco() {
+    void DesenharBuraco() const {
         glColor3f(1.0, 1.0, 1.0);
         glBindTexture(GL_TEXTURE_2D, textID);
         // Desenhe o buraco usando quadriláteros

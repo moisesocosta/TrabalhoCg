@@ -5,9 +5,10 @@
 #include <math.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include "FonteDeLuz.cpp"
 
 using namespace std;
-
+//Classe para instanciar a faixa de largada, e após passar uma vez pelo carro inimigo, se tornar a faixa de chegada
 class Largada {
 private:
     float PosX;
@@ -20,10 +21,12 @@ public:
     Largada(float PosX, float PosY, float PosZ)
         : PosX(PosX), PosY(PosY), PosZ(PosZ), velocidade(0.0), textID(0) {}
 
+    //Definindo a velocidade do objeto em relação a velocidade do meu carro
     void DefineVelo(float velocidade, float MaxVelo) {
         this->velocidade = velocidade / (MaxVelo * 2);
     }
 
+    //Fazendo a translação dele para sua posição correta
     void MoverObjetoOffPista() {
         PosY -= velocidade;
         if (PosY <= -40.0) {
@@ -31,6 +34,7 @@ public:
         }
     }
 
+    //Ao passar pela primeira vez pelo carro, ela vai para a posição +600, assim tendo que fazer os carros percorrerem 600 para cruzar a faixa de chagada
     void MoverFaixaChegada() {
         PosY -= velocidade;
         if (PosY <= -40.0) {
@@ -38,6 +42,7 @@ public:
         }
     }
 
+    //construtor, getters e setters
     const float& getPosX() const {
         return PosX;
     }
@@ -62,6 +67,7 @@ public:
         PosZ = novoPosZ;
     }
 
+    //Base do apoio da faixa
     void Desenhamastro(GLfloat x, GLfloat y, GLfloat z, GLfloat lado, GLfloat altura, GLfloat R, GLfloat G, GLfloat B) {
         glColor3f(R, G, B);
         glBegin(GL_QUADS);
@@ -84,6 +90,7 @@ public:
         glEnd();
     }
 
+    //Desenha o retangulo para a textura da largada
     void Retangulo(GLfloat Z, GLfloat R, GLfloat G, GLfloat B, GLuint text_ID) {
         glColor3f(R, G, B);
         glBindTexture(GL_TEXTURE_2D, text_ID);
@@ -96,6 +103,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    //Chamada para o desenho completo da largada
     void Faixa(GLfloat X, GLfloat Y, GLfloat Z, GLfloat lado, GLuint text_ID) {
         Desenhamastro(X, Y, Z, lado, 5, 1, 1, 1);
         Retangulo(5, 1, 1, 1, text_ID);
@@ -113,6 +121,7 @@ public:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+     //Desenha a faixa de largada no 0,0,0 e translada para a posição desejada
     void DesenharFaixa(GLuint text_ID) {
         glPushMatrix();
         glTranslatef(PosX, PosY, PosZ - 2.5);
